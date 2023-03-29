@@ -15,9 +15,14 @@ export class HeroesService {
     private http: HttpClient,
   ) { }
 
+  private getHeroesRequest(url: string): Observable<Hero[]>  {
+    return this.http.get<Hero[]>( url ).pipe(
+      catchError((error: HttpErrorResponse) => throwError(() => error)),
+    )
+  }
 
   getHeroes(): Observable<Hero[]> {
-    return this.http.get<Hero[]>(`${ this.baseUrl }/heroes`)
+    return this.getHeroesRequest(`${ this.baseUrl }/heroes`)
   }
 
   getHeroById( id: string ): Observable<Hero> {
@@ -25,5 +30,9 @@ export class HeroesService {
       .pipe(
         catchError((error: HttpErrorResponse) => throwError(() => error)),
       )
+  }
+
+  gerSuggestions( query: string ): Observable<Hero[]> {
+    return this.getHeroesRequest(`${ this.baseUrl }/heroes?q=${ query }&_limit=6`)
   }
 }
